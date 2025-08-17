@@ -647,6 +647,12 @@
 
     // Handle file upload with proper reset
     async function handleFileUpload(event) {
+        if (typeof Tesseract === 'undefined') {
+            const statusDiv = document.getElementById('upload-status');
+            statusDiv.innerHTML = '<div class="error-message">❌ OCR library not loaded. Please try refreshing the page, clearing your browser cache, or using a different browser.</div>';
+            return;
+        }
+
         var file = event.target.files[0];
         if (!file) return;
 
