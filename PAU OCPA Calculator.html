@@ -445,7 +445,7 @@
                         <th>Course Code</th>
                         <th>Course Title</th>
                         <th>Credit Hours</th>
-                        <th>Grade Points</th>
+                        <th>Percentage (%)</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -455,7 +455,7 @@
                         <td><input type="text" class="course-code" placeholder="EXT-571"></td>
                         <td><input type="text" class="course-title" placeholder="Course Title"></td>
                         <td><input type="number" class="course-credits" min="0.5" max="10" step="0.5" value="3"></td>
-                        <td><input type="number" class="course-gp" min="0" max="10" step="0.1" value="8.0"></td>
+                        <td><input type="number" class="course-percentage" min="0" max="100" step="0.1" value="80"></td>
                         <td><button type="button" class="btn btn-danger" onclick="removeCourse(this)">Remove</button></td>
                     </tr>
                 </tbody>
@@ -510,7 +510,7 @@
                     <tr>
                         <th>Course Code</th>
                         <th>Credit Hours</th>
-                        <th>Expected Marks (%)</th>
+                        <th>Expected Percentage (%)</th>
                         <th>Projected GP</th>
                         <th>Action</th>
                     </tr>
@@ -519,7 +519,7 @@
                     <tr>
                         <td><input type="text" placeholder="EXT-XXX"></td>
                         <td><input type="number" class="pred-credits" min="0.5" max="10" step="0.5" value="3" onchange="calculatePrediction()"></td>
-                        <td><input type="number" class="pred-marks" min="0" max="100" value="80" onchange="calculatePrediction()"></td>
+                        <td><input type="number" class="pred-percentage" min="0" max="100" value="80" onchange="calculatePrediction()"></td>
                         <td class="pred-gp">8.0</td>
                         <td><button type="button" class="btn btn-danger" onclick="removePrediction(this)">Remove</button></td>
                     </tr>
@@ -592,7 +592,7 @@
             '<td><input type="text" class="course-code" placeholder="EXT-XXX"></td>' +
             '<td><input type="text" class="course-title" placeholder="Course Title"></td>' +
             '<td><input type="number" class="course-credits" min="0.5" max="10" step="0.5" value="3"></td>' +
-            '<td><input type="number" class="course-gp" min="0" max="10" step="0.1" value="8.0"></td>' +
+            '<td><input type="number" class="course-percentage" min="0" max="100" step="0.1" value="80"></td>' +
             '<td><button type="button" class="btn btn-danger" onclick="removeCourse(this)">Remove</button></td>';
     }
 
@@ -642,10 +642,11 @@
             var code = row.querySelector('.course-code').value.trim();
             var title = row.querySelector('.course-title').value.trim();
             var credits = parseFloat(row.querySelector('.course-credits').value) || 0;
-            var gp = parseFloat(row.querySelector('.course-gp').value) || 0;
+            var percentage = parseFloat(row.querySelector('.course-percentage').value) || 0;
+            var gp = percentage / 10;
             
             if (code && title && credits > 0) {
-                courses.push({ code: code, title: title, credits: credits, gp: gp });
+                courses.push({ code: code, title: title, credits: credits, percentage: percentage, gp: gp });
             }
         }
         
@@ -701,7 +702,7 @@
         var tableHTML = '<table class="course-table">' +
             '<thead><tr>' +
             '<th>Sr</th><th>Course Code</th><th>Course Title</th>' +
-            '<th>Credit Hours</th><th>Grade Points</th><th>Credit Points</th>' +
+            '<th>Credit Hours</th><th>Percentage (%)</th><th>Grade Points</th><th>Credit Points</th>' +
             '</tr></thead><tbody>';
         
         for (var i = 0; i < studentData.courses.length; i++) {
@@ -712,6 +713,7 @@
                 '<td>' + course.code + '</td>' +
                 '<td>' + course.title + '</td>' +
                 '<td>' + course.credits + '</td>' +
+                '<td>' + course.percentage.toFixed(1) + '</td>' +
                 '<td>' + course.gp.toFixed(1) + '</td>' +
                 '<td>' + creditPoints.toFixed(2) + '</td>' +
                 '</tr>';
@@ -751,7 +753,7 @@
                 '<td><input type="text" class="course-code" placeholder="EXT-571"></td>' +
                 '<td><input type="text" class="course-title" placeholder="Course Title"></td>' +
                 '<td><input type="number" class="course-credits" min="0.5" max="10" step="0.5" value="3"></td>' +
-                '<td><input type="number" class="course-gp" min="0" max="10" step="0.1" value="8.0"></td>' +
+                '<td><input type="number" class="course-percentage" min="0" max="100" step="0.1" value="80"></td>' +
                 '<td><button type="button" class="btn btn-danger" onclick="removeCourse(this)">Remove</button></td>' +
                 '</tr>';
             
@@ -801,7 +803,7 @@
         
         row.innerHTML = '<td><input type="text" placeholder="EXT-XXX"></td>' +
             '<td><input type="number" class="pred-credits" min="0.5" max="10" step="0.5" value="3" onchange="calculatePrediction()"></td>' +
-            '<td><input type="number" class="pred-marks" min="0" max="100" value="80" onchange="calculatePrediction()"></td>' +
+            '<td><input type="number" class="pred-percentage" min="0" max="100" value="80" onchange="calculatePrediction()"></td>' +
             '<td class="pred-gp">8.0</td>' +
             '<td><button type="button" class="btn btn-danger" onclick="removePrediction(this)">Remove</button></td>';
     }
@@ -818,18 +820,6 @@
         calculatePrediction();
     }
 
-    // Convert marks to grade points (PAU system)
-    function marksToGP(marks) {
-        if (marks >= 90) return 10.0;
-        if (marks >= 80) return 9.0;
-        if (marks >= 70) return 8.0;
-        if (marks >= 60) return 7.0;
-        if (marks >= 55) return 6.0;
-        if (marks >= 50) return 5.0;
-        if (marks >= 40) return 4.0;
-        return 0.0;
-    }
-
     // Calculate prediction
     function calculatePrediction() {
         var rows = document.getElementById('prediction-body').rows;
@@ -839,13 +829,13 @@
         for (var i = 0; i < rows.length; i++) {
             var row = rows[i];
             var creditsInput = row.querySelector('.pred-credits');
-            var marksInput = row.querySelector('.pred-marks');
+            var percentageInput = row.querySelector('.pred-percentage');
             var gpCell = row.querySelector('.pred-gp');
             
-            if (creditsInput && marksInput && gpCell) {
+            if (creditsInput && percentageInput && gpCell) {
                 var credits = parseFloat(creditsInput.value) || 0;
-                var marks = parseFloat(marksInput.value) || 0;
-                var gp = marksToGP(marks);
+                var percentage = parseFloat(percentageInput.value) || 0;
+                var gp = percentage / 10;
                 
                 gpCell.textContent = gp.toFixed(1);
                 
@@ -895,13 +885,13 @@
         csvContent += "Semester," + studentData.semester + "\n\n";
         
         csvContent += "Course Details\n";
-        csvContent += "Sr,Course Code,Course Title,Credit Hours,Grade Points,Credit Points\n";
+        csvContent += "Sr,Course Code,Course Title,Credit Hours,Percentage (%),Grade Points,Credit Points\n";
         
         for (var i = 0; i < studentData.courses.length; i++) {
             var course = studentData.courses[i];
             var creditPoints = course.credits * course.gp;
             csvContent += (i + 1) + ',"' + course.code + '","' + course.title + '",' + 
-                course.credits + ',' + course.gp + ',' + creditPoints.toFixed(2) + '\n';
+                course.credits + ',' + course.percentage.toFixed(1) + ',' + course.gp.toFixed(1) + ',' + creditPoints.toFixed(2) + '\n';
         }
         
         csvContent += "\nSummary\n";
@@ -947,11 +937,12 @@
             '<p><strong>Semester:</strong> ' + studentData.semester + '</p>\n' +
             '<p><strong>Report Generated:</strong> ' + new Date().toLocaleDateString() + '</p>\n</div>\n' +
             '<h3>📚 Course Details</h3>\n<table>\n<thead>\n<tr>\n' +
-            '<th>Sr</th><th>Course Code</th><th>Course Title</th><th>Credit Hours</th><th>Grade Points</th><th>Credit Points</th>\n' +
+            '<th>Sr</th><th>Course Code</th><th>Course Title</th><th>Credit Hours</th><th>Percentage (%)</th><th>Grade Points</th><th>Credit Points</th>\n' +
             '</tr>\n</thead>\n<tbody>\n' +
             studentData.courses.map(function(course, index) {
                 return '<tr>\n<td>' + (index + 1) + '</td>\n<td>' + course.code + '</td>\n' +
                     '<td>' + course.title + '</td>\n<td>' + course.credits + '</td>\n' +
+                    '<td>' + course.percentage.toFixed(1) + '</td>\n' +
                     '<td>' + course.gp.toFixed(1) + '</td>\n<td>' + (course.credits * course.gp).toFixed(2) + '</td>\n</tr>';
             }).join('\n') +
             '\n</tbody>\n</table>\n' +
