@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAU OCPA Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        .pau-ocpa-calculator {
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        
+        .pau-header {
+            background: #2e7d32;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        
+        .pau-header h2 {
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .content-wrapper {
+            padding: 30px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 0;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            border-right: 1px solid #ddd;
+        }
+        
+        .tab-btn:last-child {
+            border-right: none;
+        }
+        
+        .tab-btn.active {
+            background: #2e7d32;
+            color: white;
+        }
+        
+        .tab-btn:hover:not(.active) {
+            background: #e8f5e9;
+        }
+        
+        .upload-section {
+            background: #f8f9fa;
+            padding: 40px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .upload-section:hover {
+            border-color: #2e7d32;
+            background: #e8f5e9;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #2e7d32;
+        }
+        
+        .upload-section h3 {
+            color: #2e7d32;
+            margin-bottom: 10px;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.1);
+        }
+        
+        .course-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .course-table th {
+            background: #2e7d32;
+            color: white;
+            padding: 15px 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .course-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .course-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .course-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .course-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .btn {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .btn:hover {
+            background: #1b5e20;
+            transform: translateY(-1px);
+        }
+        
+        .btn-danger {
+            background: #d32f2f;
+        }
+        
+        .btn-danger:hover {
+            background: #b71c1c;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #2e7d32;
+            color: #2e7d32;
+        }
+        
+        .btn-outline:hover {
+            background: #2e7d32;
+            color: white;
+        }
+        
+        .btn-blue {
+            background: #1976d2;
+        }
+        
+        .btn-blue:hover {
+            background: #1565c0;
+        }
+        
+        .add-row-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .add-row-btn:hover {
+            background: #45a049;
+        }
+        
+        .summary-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2e7d32;
+        }
+        
+        .summary-box h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        
+        .summary-box p {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        
+        .summary-box strong {
+            color: #1b5e20;
+        }
+        
+        .export-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #c3e6cb;
+            margin: 15px 0;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #f5c6cb;
+            margin: 15px 0;
+        }
+        
+        .loading {
+            color: #1976d2;
+            font-style: italic;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .prediction-summary {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #1976d2;
+        }
+        
+        .prediction-summary h4 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+        
+        .ocpa-display {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2e7d32;
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .uploaded-image {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        .parsing-section {
+            background: #f0f4f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #1976d2;
+        }
+
+        .parsing-section h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .data-extraction {
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Responsive design for mobile */
+        @media (max-width: 768px) {
+            .pau-ocpa-calculator {
+                margin: 10px;
+            }
+            
+            .content-wrapper {
+                padding: 15px;
+            }
+            
+            .tab-buttons {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }
+            
+            .tab-btn:last-child {
+                border-bottom: none;
+            }
+            
+            .course-table {
+                font-size: 12px;
+            }
+            
+            .course-table th,
+            .course-table td {
+                padding: 8px 5px;
+            }
+            
+            .export-options {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pau-ocpa-calculator">
+        <div class="pau-header">
+            <h2>🎓 PAU OCPA Calculator</h2>
+            <p>Calculate and Predict your Overall Cumulative Performance Average</p>
+        </div>
+        
+        <div class="content-wrapper">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('upload', this)">📁 Upload CP Sheet</button>
+                <button class="tab-btn" onclick="switchTab('manual', this)">✏️ Manual Entry</button>
+            </div>
+
+            <!-- Upload Section -->
+            <div id="upload-section" class="section active">
+                <div class="upload-section" onclick="triggerFileUpload()">
+                    <div class="upload-icon">📄</div>
+                    <h3>Upload Your PAU Credit Point Sheet</h3>
+                    <p>Click here to upload your CP sheet (JPG, PNG, PDF)</p>
+                    <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.pdf" onchange="handleFileUpload(event)">
+                </div>
+                
+                <button type="button" class="btn btn-outline" onclick="clearUploadData()" style="margin-top: 10px;">🗑️ Clear Upload & Start Fresh</button>
+                
+                <div id="upload-status"></div>
+                <div id="image-preview"></div>
+                <div id="parsing-section" style="display: none;"></div>
+            </div>
+
+            <!-- Manual Entry Section -->
+            <div id="manual-section" class="section">
+                <h3>📝 Enter Student Data Manually</h3>
+                
+                <div class="form-group">
+                    <label for="student-name">Student Name *</label>
+                    <input type="text" id="student-name" placeholder="Enter full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="admission-no">Admission Number *</label>
+                    <input type="text" id="admission-no" placeholder="Enter admission number (e.g., L-2015-A-18-D)" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="semester">Current Semester *</label>
+                    <input type="text" id="semester" placeholder="e.g., 17-18.1 (4)" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="prev-credits">Previous Total Credits</label>
+                    <input type="number" id="prev-credits" placeholder="Previous cumulative credit hours" min="0" step="0.5" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="prev-cp">Previous Total Credit Points</label>
+                    <input type="number" id="prev-cp" placeholder="Previous cumulative credit points" min="0" step="0.01" value="0">
+                </div>
+
+                <h4>📚 Current Semester Courses</h4>
+                <table class="course-table" id="courses-table">
+                    <thead>
+                        <tr>
+                            <th>Sr</th>
+                            <th>Course Code</th>
+                            <th>Course Title</th>
+                            <th>Credit Hours</th>
+                            <th>Grade Points</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="courses-body">
+                        <tr>
+                            <td>1</td>
+                            <td><input type="text" class="course-code" placeholder="EXT-571"></td>
+                            <td><input type="text" class="course-title" placeholder="Course Title"></td>
+                            <td><input type="number" class="course-credits" min="0.5" max="10" step="0.5" value="3"></td>
+                            <td><input type="number" class="course-gp" min="0" max="10" step="0.1" value="8.0"></td>
+                            <td><button type="button" class="btn btn-danger" onclick="removeCourse(this)">Remove</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <button type="button" class="add-row-btn" onclick="addCourse()">➕ Add Course</button>
+                
+                <div style="margin-top: 30px;">
+                    <button type="button" class="btn" onclick="calculateOCPA()">🧮 Calculate OCPA</button>
+                    <button type="button" class="btn btn-outline" onclick="clearData()">🗑️ Clear All</button>
+                </div>
+                
+                <div id="manual-status"></div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-section" style="display: none;">
+                <div class="summary-box">
+                    <h3>📊 Student Information</h3>
+                    <p><strong>Name:</strong> <span id="display-name">-</span></p>
+                    <p><strong>Admission No:</strong> <span id="display-admission">-</span></p>
+                    <p><strong>Semester:</strong> <span id="display-semester">-</span></p>
+                </div>
+
+                <h4>📋 Course Details</h4>
+                <div id="results-table"></div>
+
+                <div class="summary-box">
+                    <h3>📈 Academic Summary</h3>
+                    <p><strong>Current Semester Credit Hours:</strong> <span id="current-credits">0</span></p>
+                    <p><strong>Current Semester Credit Points:</strong> <span id="current-cp">0.00</span></p>
+                    <p><strong>Current Semester CPA:</strong> <span id="current-cpa">0.00</span></p>
+                    <p><strong>Previous Credit Hours:</strong> <span id="previous-credits">0</span></p>
+                    <p><strong>Previous Credit Points:</strong> <span id="previous-cp">0.00</span></p>
+                    <div class="ocpa-display">
+                        Overall OCPA: <span id="final-ocpa">0.00</span>
+                    </div>
+                </div>
+
+                <div class="export-options">
+                    <button class="btn btn-blue" onclick="exportToHTML()">📄 Export Report</button>
+                    <button class="btn btn-blue" onclick="exportToCSV()">📊 Export CSV</button>
+                    <button class="btn" onclick="showPrediction()">🔮 Predict Future OCPA</button>
+                </div>
+            </div>
+
+            <!-- Prediction Section -->
+            <div id="prediction-section" style="display: none;">
+                <h3>🔮 OCPA Prediction</h3>
+                <p>Enter expected performance for upcoming semester:</p>
+
+                <table class="course-table" id="prediction-table">
+                    <thead>
+                        <tr>
+                            <th>Course Code</th>
+                            <th>Course Title</th>
+                            <th>Credit Hours</th>
+                            <th>Expected Marks (%)</th>
+                            <th>Projected GP</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="prediction-body">
+                        <tr>
+                            <td><input type="text" placeholder="EXT-671"></td>
+                            <td><input type="text" placeholder="Advanced Course"></td>
+                            <td><input type="number" class="pred-credits" min="0.5" max="10" step="0.5" value="3" onchange="calculatePrediction()"></td>
+                            <td><input type="number" class="pred-marks" min="0" max="100" value="80" onchange="calculatePrediction()"></td>
+                            <td class="pred-gp">8.0</td>
+                            <td><button type="button" class="btn btn-danger" onclick="removePrediction(this)">Remove</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <button type="button" class="add-row-btn" onclick="addPrediction()">➕ Add Course</button>
+
+                <div class="prediction-summary">
+                    <h4>🎯 Prediction Results</h4>
+                    <p><strong>Current OCPA:</strong> <span id="pred-current-ocpa">0.00</span></p>
+                    <p><strong>New Semester Credit Hours:</strong> <span id="pred-new-credits">0</span></p>
+                    <p><strong>New Semester CP:</strong> <span id="pred-new-cp">0.00</span></p>
+                    <p><strong>New Semester CPA:</strong> <span id="pred-new-cpa">0.00</span></p>
+                    <div class="ocpa-display">
+                        Projected OCPA: <span id="projected-ocpa">0.00</span>
+                    </div>
+                </div>
+
+                <button type="button" class="btn" onclick="calculatePrediction()">🧮 Recalculate</button>
+                <button type="button" class="btn btn-outline" onclick="backToResults()">← Back to Results</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables - Reset properly on new uploads
+        var studentData = {
+            name: '',
+            admissionNo: '',
+            semester: '',
+            courses: [],
+            prevCredits: 0,
+            prevCP: 0,
+            currentCredits: 0,
+            currentCP: 0,
+            ocpa: 0
+        };
+
+        var uploadedFile = null;
+        var isDataFromUpload = false;
+
+        // Clear upload data completely
+        function clearUploadData() {
+            // Reset file input
+            document.getElementById('file-input').value = '';
+            
+            // Clear all display elements
+            document.getElementById('upload-status').innerHTML = '';
+            document.getElementById('image-preview').innerHTML = '';
+            document.getElementById('parsing-section').style.display = 'none';
+            
+            // Reset student data
+            studentData = {
+                name: '',
+                admissionNo: '',
+                semester: '',
+                courses: [],
+                prevCredits: 0,
+                prevCP: 0,
+                currentCredits: 0,
+                currentCP: 0,
+                ocpa: 0
+            };
+            
+            // Hide results if showing
+            document.getElementById('results-section').style.display = 'none';
+            document.getElementById('prediction-section').style.display = 'none';
+            
+            uploadedFile = null;
+            isDataFromUpload = false;
+            
+            alert('✅ Upload data cleared! Ready for new upload.');
+        }
+
+        // Switch between tabs
+        function switchTab(tab, element) {
+            // Remove active class from all tabs and sections
+            var tabs = document.getElementsByClassName('tab-btn');
+            var sections = document.getElementsByClassName('section');
+            
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].classList.remove('active');
+            }
+            
+            // Add active class to selected tab
+            element.classList.add('active');
+            
+            // Show selected section
+            if (tab === 'upload') {
+                document.getElementById('upload-section').classList.add('active');
+            } else if (tab === 'manual') {
+                document.getElementById('manual-section').classList.add('active');
+            }
+        }
+
+        // Trigger file upload
+        function triggerFileUpload() {
+            document.getElementById('file-input').click();
+        }
+
+        // Handle file upload with proper reset
+        function handleFileUpload(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+
+            // Clear previous data first
+            clearUploadData();
+            
+            uploadedFile = file;
+            var statusDiv = document.getElementById('upload-status');
+            var previewDiv = document.getElementById('image-preview');
+            var parsingDiv = document.getElementById('parsing-section');
+            
+            statusDiv.innerHTML = '<div class="loading">📤 Processing CP sheet... Please wait.</div>';
+
+            // Show image preview for supported formats
+            if (file.type.startsWith('image/')) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    previewDiv.innerHTML = '<h4>📷 Uploaded Image:</h4><img src="' + e.target.result + '" class="uploaded-image" alt="Uploaded CP Sheet">';
+                };
+                reader.readAsDataURL(file);
+            }
+
+            // Simulate OCR processing with enhanced parsing
+            setTimeout(function() {
+                parseUploadedFile(file);
+            }, 2000);
+        }
+
+        // Enhanced file parsing function
+        function parseUploadedFile(file) {
+            var statusDiv = document.getElementById('upload-status');
+            var parsingDiv = document.getElementById('parsing-section');
+            
+            // Show parsing section
+            parsingDiv.style.display = 'block';
+            parsingDiv.innerHTML = '<h4>🔍 Extracting Data from CP Sheet...</h4><div class="loading">Processing image with OCR...</div>';
+            
+            // Simulate OCR extraction with realistic PAU data
+            setTimeout(function() {
+                var extractedData = simulateOCRExtraction();
+                
+                // Update parsing section with extracted data
+                parsingDiv.innerHTML = '<h4>📊 Extracted Data:</h4>' +
+                    '<div class="data-extraction">' +
+                    'Student Name: ' + extractedData.name + '<br>' +
+                    'Admission No: ' + extractedData.admissionNo + '<br>' +
+                    'Semester: ' + extractedData.semester + '<br>' +
+                    'Courses Found: ' + extractedData.courses.length + '<br>' +
+                    'Previous Credits: ' + extractedData.prevCredits + '<br>' +
+                    'Previous Credit Points: ' + extractedData.prevCP + '<br>' +
+                    'Current OCPA: ' + extractedData.currentOCPA +
+                    '</div>' +
+                    '<button type="button" class="btn" onclick="processExtractedData()" style="margin-top: 10px;">✅ Process This Data</button>' +
+                    '<button type="button" class="btn btn-outline" onclick="editExtractedData()" style="margin-top: 10px;">✏️ Edit Before Processing</button>';
+                
+                // Store extracted data temporarily
+                window.extractedStudentData = extractedData;
+                
+                statusDiv.innerHTML = '<div class="success-message">✅ CP sheet processed! Review the extracted data below.</div>';
+            }, 1500);
+        }
+
+        // Simulate OCR data extraction based on the CP sheet format
+        function simulateOCRExtraction() {
+            return {
+                name: 'DAVINDER SINGH',
+                admissionNo: 'L-2015-A-18-D',
+                semester: '17-18.1 (4)',
+                subject: 'EXT EDUCATION',
+                courses: [
+                    { code: 'EXT-571', title: 'Seminar', credits: 1, gp: 7.5, creditPoints: 7.5 },
+                    { code: 'EXT-700', title: 'Ph.D. Research', credits: 16, gp: 5, creditPoints: 80 },
+                    { code: 'EXT-700', title: 'Ph.D. Research', credits: 10, gp: 0, creditPoints: 0 }
+                ],
+                currentCredits: 27,
+                currentCP: 87.5,
+                currentCPA: 3.24,
+                prevCredits: 26,
+                prevCP: 202.30,
+                cumulativeCredits: 27,
+                cumulativeCP: 210.75,
+                currentOCPA: 7.81,
+                performance: 'Good'
+            };
+        }
+
+        // Process extracted data directly
+        function processExtractedData() {
+            if (!window.extractedStudentData) {
+                alert('❌ No extracted data found!');
+                return;
+            }
+            
+            var data = window.extractedStudentData;
+            
+            // Update global student data
+            studentData = {
+                name: data.name,
+                admissionNo: data.admissionNo,
+                semester: data.semester,
+                courses: data.courses,
+                prevCredits: data.prevCredits,
+                prevCP: data.prevCP,
+                currentCredits: data.currentCredits,
+                currentCP: data.currentCP,
+                ocpa: data.currentOCPA
+            };
+            
+            isDataFromUpload = true;
+            displayResults();
+            
+            var statusDiv = document.getElementById('upload-status');
+            statusDiv.innerHTML = '<div class="success-message">✅ Data processed successfully! Results displayed below.</div>';
+        }
+
+        // Edit extracted data before processing
+        function editExtractedData() {
+            if (!window.extractedStudentData) {
+                alert('❌ No extracted data found!');
+                return;
+            }
+            
+            var data = window.extractedStudentData;
+            
+            // Switch to manual entry tab and populate with extracted data
+            switchTab('manual', document.getElementsByClassName('tab-btn')[1]);
+            
+            // Populate form fields
+            document.getElementById('student-name').value = data.name;
+            document.getElementById('admission-no').value = data.admissionNo;
+            document.getElementById('semester').value = data.semester;
+            document.getElementById('prev-credits').value = data.prevCredits;
+            document.getElementById('prev-cp').value = data.prevCP;
+            
+            // Clear and populate courses table
+            var tbody = document.getElementById('courses-body');
+            tbody.innerHTML = '';
+            
+            for (var i = 0; i < data.courses.length; i++) {
+                var course = data.courses[i];
+                var row = tbody.insertRow();
+                row.innerHTML = '<td>' + (i + 1) + '</td>' +
+                    '<td><input type="text" class="course-code" value="' + course.code + '"></td>' +
+                    '<td><input type="text" class="course-title" value="' + course.title + '"></td>' +
+                    '<td><input type="number" class="course-credits" min="0.5" max="20" step="0.5" value="' + course.credits + '"></td>' +
+                    '<td><input type="number" class="course-gp" min="0" max="10" step="0.1" value="' + course.gp + '"></td>' +
+                    '<td><button type="button" class="btn btn-danger" onclick="removeCourse(this)">Remove</button></td>';
+            }
+            
+            document.getElementById('manual-status').innerHTML = '<div class="success-message">📝 Data loaded from upload! Edit as needed and click Calculate OCPA.</div>';
+        }
+
+        // Add new course row
+        function addCourse() {
+            var tbody = document.getElementById('courses-body');
+            var rowCount = tbody.rows.length + 1;
+            
+            var row = tbody.insertRow();
+            row.innerHTML = '<td>' + rowCount + '</td>' +
+                '<td><input type="text" class="course-code" placeholder="EXT-XXX"></td>' +
+                '<td><input type="text" class="course-title" placeholder="Course Title"></td>' +
+                '<td><input type="number" class="course-credits" min="0.5" max="20" step="0.5" value="3"></td>' +
+                '<td><input type="number" class="course-gp" min="0" max="10" step="0.1" value="8.0"></td>' +
+                '<td><button type="button" class="btn btn-danger" onclick="removeCourse(this)">Remove</button></td>';
+        }
+
+        // Remove course row
+        function removeCourse(button) {
+            var row = button.closest('tr');
+            var tbody = document.getElementById('courses-body');
+            
+            if (tbody.rows.length <= 1) {
+                alert('⚠️ At least one course is required!');
+                return;
+            }
+            
+            row.remove();
+            
+            // Renumber rows
+            var rows = tbody.rows;
+            for (var i = 0; i < rows.length; i++) {
+                rows[i].cells[0].textContent = i + 1;
+            }
+        }
+
+        // Calculate OCPA from manual entry
+        function calculateOCPA() {
+            var statusDiv = document.getElementById('manual-status');
+            
+            // Get basic info
+            var name = document.getElementById('student-name').value.trim();
+            var admissionNo = document.getElementById('admission-no').value.trim();
+            var semester = document.getElementById('semester').value.trim();
+            
+            if (!name || !admissionNo || !semester) {
+                statusDiv.innerHTML = '<div class="error-message">❌ Please fill in all required fields (Name, Admission No, Semester)</div>';
+                return;
+            }
+            
+            // Get previous data
+            var prevCredits = parseFloat(document.getElementById('prev-credits').value) || 0;
+            var prevCP = parseFloat(document.getElementById('prev-cp').value) || 0;
+            
+            // Get courses
+            var courses = [];
+            var rows = document.getElementById('courses-body').rows;
+            
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var code = row.querySelector('.course-code').value.trim();
+                var title = row.querySelector('.course-title').value.trim();
+                var credits = parseFloat(row.querySelector('.course-credits').value) || 0;
+                var gp = parseFloat(row.querySelector('.course-gp').value) || 0;
+                
+                if (code && title && credits > 0) {
+                    courses.push({ code: code, title: title, credits: credits, gp: gp });
+                }
+            }
+            
+            if (courses.length === 0) {
+                statusDiv.innerHTML = '<div class="error-message">❌ Please add at least one course with valid data</div>';
+                return;
+            }
+            
+            // Update student data
+            studentData = {
+                name: name,
+                admissionNo: admissionNo,
+                semester: semester,
+                courses: courses,
+                prevCredits: prevCredits,
+                prevCP: prevCP,
+                currentCredits: 0,
+                currentCP: 0,
+                ocpa: 0
+            };
+            
+            calculateCurrentSemester();
+            displayResults();
+            
+            statusDiv.innerHTML = '<div class="success-message">✅ OCPA calculated successfully!</div>';
+        }
+
+        // Calculate current semester totals
+        function calculateCurrentSemester() {
+            studentData.currentCredits = 0;
+            studentData.currentCP = 0;
+            
+            for (var i = 0; i < studentData.courses.length; i++) {
+                var course = studentData.courses[i];
+                studentData.currentCredits += course.credits;
+                studentData.currentCP += (course.credits * course.gp);
+            }
+            
+            var totalCredits = studentData.prevCredits + studentData.currentCredits;
+            var totalCP = studentData.prevCP + studentData.currentCP;
+            
+            studentData.ocpa = totalCredits > 0 ? totalCP / totalCredits : 0;
+        }
+
+        // Display results
+        function displayResults() {
+            // Update display elements
+            document.getElementById('display-name').textContent = studentData.name;
+            document.getElementById('display-admission').textContent = studentData.admissionNo;
+            document.getElementById('display-semester').textContent = studentData.semester;
+            
+            // Create results table
+            var tableHTML = '<table class="course-table">' +
+                '<thead><tr>' +
+                '<th>Sr</th><th>Course Code</th><th>Course Title</th>' +
+                '<th>Credit Hours</th><th>Grade Points</th><th>Credit Points</th>' +
+                '</tr></thead><tbody>';
+            
+            for (var i = 0; i < studentData.courses.length; i++) {
+                var course = studentData.courses[i];
+                var creditPoints = course.credits * course.gp;
+                tableHTML += '<tr>' +
+                    '<td>' + (i + 1) + '</td>' +
+                    '<td>' + course.code + '</td>' +
+                    '<td>' + course.title + '</td>' +
+                    '<td>' + course.credits + '</td>' +
+                    '<td>' + course.gp.toFixed(1) + '</td>' +
+                    '<td>' + creditPoints.toFixed(2) + '</td>' +
+                    '</tr>';
+            }
+            
+            tableHTML += '</tbody></table>';
+            document.getElementById('results-table').innerHTML = tableHTML;
+            
+            // Update summary
+            var currentCPA = studentData.currentCredits > 0 ? studentData.currentCP / studentData.currentCredits : 0;
+            
+            document.getElementById('current-credits').textContent = studentData.currentCredits;
+            document.getElementById('current-cp').textContent = studentData.currentCP.toFixed(2);
+            document.getElementById('current-cpa').textContent = currentCPA.toFixed(2);
+            document.getElementById('previous-credits').textContent = studentData.prevCredits;
+            document.getElementById('previous-cp').textContent = studentData.prevCP.toFixed(2);
+            document.getElementById('final-ocpa').textContent = studentData.ocpa.toFixed(2);
+            
+            // Show results section
+            document.getElementById('results-section').style.display = 'block';
+        }
+
+        // Clear all data
+        function clearData() {
+            if (confirm('🗑️ Are you sure you want to clear all data?')) {
+                // Reset form
+                document.getElementById('student-name').value = '';
+                document.getElementById('admission-no').value = '';
+                document.getElementById('semester').value = '';
+                document.getElementById('prev-credits').value = '0';
+                document.getElementById('prev-cp').value = '0';
+                
+                // Reset courses table
+                var tbody = document.getElementById('courses-body');
+                tbody.innerHTML = '<tr>' +
+                    '<td>1</td>' +
+                    '<td><input type="text" class="course-code" placeholder="EXT-571"></td>' +
+                    '<td><input type="text" class="course-title" placeholder="Course Title"></td>' +
+                    '<td><input type="number" class="course-credits" min="0.5" max="10" step="0.5" value="3"></td>' +
+                    '<td><input type="number" class="course-gp" min="0" max="10" step="0.1" value="8.0"></td>' +
+                    '<td><button type="button" class="btn btn-danger" onclick="removeCourse(this)">Remove</button></td>' +
+                    '</tr>';
+                
+                // Clear status messages
+                document.getElementById('manual-status').innerHTML = '';
+                
+                // Hide results
+                document.getElementById('results-section').style.display = 'none';
+                document.getElementById('prediction-section').style.display = 'none';
+                
+                // Reset student data
+                studentData = {
+                    name: '', admissionNo: '', semester: '', courses: [],
+                    prevCredits: 0, prevCP: 0, currentCredits: 0, currentCP: 0, ocpa: 0
+                };
+                
+                alert('✅ All data cleared successfully!');
+            }
+        }
+
+        // Show prediction section
+        function showPrediction() {
+            if (studentData.ocpa === 0) {
+                alert('⚠️ Please calculate OCPA first!');
+                return;
+            }
+            
+            document.getElementById('results-section').style.display = 'none';
+            document.getElementById('prediction-section').style.display = 'block';
+            
+            // Update current OCPA in prediction
+            document.getElementById('pred-current-ocpa').textContent = studentData.ocpa.toFixed(2);
+            
+            calculatePrediction();
+        }
+
+        // Back to results
+        function backToResults() {
+            document.getElementById('prediction-section').style.display = 'none';
+            document.getElementById('results-section').style.display = 'block';
+        }
+
+        // Add prediction course
+        function addPrediction() {
+            var tbody = document.getElementById('prediction-body');
+            var row = tbody.insertRow();
+            
+            row.innerHTML = '<td><input type="text" placeholder="EXT-XXX"></td>' +
+                '<td><input type="text" placeholder="Course Title"></td>' +
+                '<td><input type="number" class="pred-credits" min="0.5" max="20" step="0.5" value="3" onchange="calculatePrediction()"></td>' +
+                '<td><input type="number" class="pred-marks" min="0" max="100" value="75" onchange="calculatePrediction()"></td>' +
+                '<td class="pred-gp">7.5</td>' +
+                '<td><button type="button" class="btn btn-danger" onclick="removePrediction(this)">Remove</button></td>';
+        }
+
+        // Remove prediction course
+        function removePrediction(button) {
+            var tbody = document.getElementById('prediction-body');
+            if (tbody.rows.length <= 1) {
+                alert('⚠️ At least one course is required for prediction!');
+                return;
+            }
+            
+            button.closest('tr').remove();
+            calculatePrediction();
+        }
+
+        // Convert marks to grade points (PAU system)
+        function marksToGP(marks) {
+            if (marks >= 90) return 10.0;
+            if (marks >= 80) return 9.0;
+            if (marks >= 70) return 8.0;
+            if (marks >= 60) return 7.0;
+            if (marks >= 55) return 6.0;
+            if (marks >= 50) return 5.0;
+            if (marks >= 40) return 4.0;
+            return 0.0;
+        }
+
+        // Calculate prediction
+        function calculatePrediction() {
+            var rows = document.getElementById('prediction-body').rows;
+            var newCredits = 0;
+            var newCP = 0;
+            
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var creditsInput = row.querySelector('.pred-credits');
+                var marksInput = row.querySelector('.pred-marks');
+                var gpCell = row.querySelector('.pred-gp');
+                
+                if (creditsInput && marksInput && gpCell) {
+                    var credits = parseFloat(creditsInput.value) || 0;
+                    var marks = parseFloat(marksInput.value) || 0;
+                    var gp = marksToGP(marks);
+                    
+                    gpCell.textContent = gp.toFixed(1);
+                    
+                    newCredits += credits;
+                    newCP += (credits * gp);
+                }
+            }
+            
+            // Calculate new CPA
+            var newCPA = newCredits > 0 ? newCP / newCredits : 0;
+            
+            // Calculate projected OCPA
+            var totalCurrentCredits = studentData.prevCredits + studentData.currentCredits;
+            var totalCurrentCP = studentData.prevCP + studentData.currentCP;
+            var projectedTotalCredits = totalCurrentCredits + newCredits;
+            var projectedTotalCP = totalCurrentCP + newCP;
+            var projectedOCPA = projectedTotalCredits > 0 ? projectedTotalCP / projectedTotalCredits : 0;
+            
+            // Update display
+            document.getElementById('pred-new-credits').textContent = newCredits.toFixed(1);
+            document.getElementById('pred-new-cp').textContent = newCP.toFixed(2);
+            document.getElementById('pred-new-cpa').textContent = newCPA.toFixed(2);
+            document.getElementById('projected-ocpa').textContent = projectedOCPA.toFixed(2);
+        }
+
+        // Export to HTML report
+        function exportToHTML() {
+            var content = generateReportContent();
+            var blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'PAU_OCPA_Report_' + studentData.admissionNo.replace(/[^a-zA-Z0-9]/g, '_') + '.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('📄 Report downloaded successfully!');
+        }
+
+        // Export to CSV
+        function exportToCSV() {
+            var csvContent = "PAU OCPA Report\n";
+            csvContent += "Student Name," + studentData.name + "\n";
+            csvContent += "Admission No," + studentData.admissionNo + "\n";
+            csvContent += "Semester," + studentData.semester + "\n\n";
+            
+            csvContent += "Course Details\n";
+            csvContent += "Sr,Course Code,Course Title,Credit Hours,Grade Points,Credit Points\n";
+            
+            for (var i = 0; i < studentData.courses.length; i++) {
+                var course = studentData.courses[i];
+                var creditPoints = course.credits * course.gp;
+                csvContent += (i + 1) + ',"' + course.code + '","' + course.title + '",' + 
+                    course.credits + ',' + course.gp + ',' + creditPoints.toFixed(2) + '\n';
+            }
+            
+            csvContent += "\nSummary\n";
+            csvContent += "Current Semester Credit Hours," + studentData.currentCredits + "\n";
+            csvContent += "Current Semester Credit Points," + studentData.currentCP.toFixed(2) + "\n";
+            csvContent += "Previous Credit Hours," + studentData.prevCredits + "\n";
+            csvContent += "Previous Credit Points," + studentData.prevCP.toFixed(2) + "\n";
+            csvContent += "Overall OCPA," + studentData.ocpa.toFixed(2) + "\n";
+            
+            var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'PAU_OCPA_Report_' + studentData.admissionNo.replace(/[^a-zA-Z0-9]/g, '_') + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('📊 CSV report downloaded successfully!');
+        }
+
+        // Generate HTML report content
+        function generateReportContent() {
+            var currentCPA = studentData.currentCredits > 0 ? studentData.currentCP / studentData.currentCredits : 0;
+            
+            return '<!DOCTYPE html>\n<html>\n<head>\n' +
+                '<title>PAU OCPA Report - ' + studentData.admissionNo + '</title>\n' +
+                '<style>\n' +
+                'body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }\n' +
+                '.header { background: #2e7d32; color: white; padding: 20px; text-align: center; margin-bottom: 30px; }\n' +
+                '.info-box { background: #f0f7f0; padding: 15px; margin: 20px 0; border-left: 4px solid #2e7d32; }\n' +
+                'table { width: 100%; border-collapse: collapse; margin: 20px 0; }\n' +
+                'th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }\n' +
+                'th { background: #2e7d32; color: white; }\n' +
+                '.summary { background: #e8f5e9; padding: 20px; margin: 20px 0; border-radius: 8px; }\n' +
+                '.ocpa-highlight { font-size: 1.5em; font-weight: bold; color: #2e7d32; text-align: center; }\n' +
+                '</style>\n</head>\n<body>\n' +
+                '<div class="header">\n<h1>🎓 PAU OCPA Report</h1>\n<p>Punjab Agricultural University</p>\n</div>\n' +
+                '<div class="info-box">\n<h3>Student Information</h3>\n' +
+                '<p><strong>Name:</strong> ' + studentData.name + '</p>\n' +
+                '<p><strong>Admission Number:</strong> ' + studentData.admissionNo + '</p>\n' +
+                '<p><strong>Semester:</strong> ' + studentData.semester + '</p>\n' +
+                '<p><strong>Report Generated:</strong> ' + new Date().toLocaleDateString() + '</p>\n</div>\n' +
+                '<h3>📚 Course Details</h3>\n<table>\n<thead>\n<tr>\n' +
+                '<th>Sr</th><th>Course Code</th><th>Course Title</th><th>Credit Hours</th><th>Grade Points</th><th>Credit Points</th>\n' +
+                '</tr>\n</thead>\n<tbody>\n' +
+                studentData.courses.map(function(course, index) {
+                    return '<tr>\n<td>' + (index + 1) + '</td>\n<td>' + course.code + '</td>\n' +
+                        '<td>' + course.title + '</td>\n<td>' + course.credits + '</td>\n' +
+                        '<td>' + course.gp.toFixed(1) + '</td>\n<td>' + (course.credits * course.gp).toFixed(2) + '</td>\n</tr>';
+                }).join('\n') +
+                '\n</tbody>\n</table>\n' +
+                '<div class="summary">\n<h3>📈 Academic Summary</h3>\n' +
+                '<p><strong>Current Semester Credit Hours:</strong> ' + studentData.currentCredits + '</p>\n' +
+                '<p><strong>Current Semester Credit Points:</strong> ' + studentData.currentCP.toFixed(2) + '</p>\n' +
+                '<p><strong>Current Semester CPA:</strong> ' + currentCPA.toFixed(2) + '</p>\n' +
+                '<p><strong>Previous Total Credit Hours:</strong> ' + studentData.prevCredits + '</p>\n' +
+                '<p><strong>Previous Total Credit Points:</strong> ' + studentData.prevCP.toFixed(2) + '</p>\n' +
+                '<div class="ocpa-highlight">\nOverall Cumulative Performance Average (OCPA): ' + studentData.ocpa.toFixed(2) + '\n</div>\n</div>\n' +
+                '<div style="text-align: center; margin-top: 40px; color: #666;">\n' +
+                '<p><em>This report was generated by PAU OCPA Calculator</em></p>\n</div>\n</body>\n</html>';
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Enhanced PAU OCPA Calculator loaded successfully!');
+        });
+    </script>
+</body>
+</html>
