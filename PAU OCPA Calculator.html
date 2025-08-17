@@ -425,6 +425,10 @@
             <div class="form-group">
                 <label for="semester">Current Semester</label>
                 <input type="text" id="semester" placeholder="e.g., 17-18.1 (4)">
+            </div>
+            
+            <p style="font-style: italic; font-size: 14px; margin-top: -10px; margin-bottom: 20px;">
+                <strong style="color: #d32f2f;">Important:</strong> You can find "Cumu. Cr. Hrs. and Cumu. Cr. Pts" in the CP sheet. For first-semester students, fill these values with '0' (zero).
             </p>
 
             <div class="form-group">
@@ -626,7 +630,7 @@
         var prevCP = parseFloat(document.getElementById('prev-cp').value);
         
         if (isNaN(prevCredits) || isNaN(prevCP)) {
-            statusDiv.innerHTML = '<div class="error-message">❌ "Previous Total Credits" and "Previous Total Credit Points" must be valid numbers.</div>';
+            statusDiv.innerHTML = '<div class="error-message">❌ "Cumulative Total Credits" and "Cumulative Total Credit Points" must be valid numbers.</div>';
             return;
         }
         
