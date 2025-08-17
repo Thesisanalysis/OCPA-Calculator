@@ -413,28 +413,32 @@
             <h3>📝 Enter Student Data Manually (From Recent CP Sheet)</h3>
 
             <div class="form-group">
-                <label for="student-name">Student Name *</label>
-                <input type="text" id="student-name" placeholder="Enter full name" required>
+                <label for="student-name">Student Name</label>
+                <input type="text" id="student-name" placeholder="Enter full name">
             </div>
 
             <div class="form-group">
-                <label for="admission-no">Admission Number *</label>
-                <input type="text" id="admission-no" placeholder="Enter admission number (e.g., L-2015-A-18-D)" required>
+                <label for="admission-no">Admission Number</label>
+                <input type="text" id="admission-no" placeholder="Enter admission number (e.g., L-2015-A-18-D)">
             </div>
 
             <div class="form-group">
-                <label for="semester">Current Semester *</label>
-                <input type="text" id="semester" placeholder="e.g., 17-18.1 (4)" required>
+                <label for="semester">Current Semester</label>
+                <input type="text" id="semester" placeholder="e.g., 17-18.1 (4)">
+            </div>
+            
+            <p style="font-style: italic; font-size: 14px; margin-top: -10px; margin-bottom: 20px;">
+                <strong style="color: #d32f2f;">Important:</strong> For first-semester students, fill in "Previous Total Credits" and "Previous Total Credit Points" with '0' (zero).
+            </p>
+
+            <div class="form-group">
+                <label for="prev-credits">Previous Total Credits *</label>
+                <input type="number" id="prev-credits" placeholder="Previous cumulative credit hours" min="0" step="0.5" value="0" required>
             </div>
 
             <div class="form-group">
-                <label for="prev-credits">Previous Total Credits</label>
-                <input type="number" id="prev-credits" placeholder="Previous cumulative credit hours" min="0" step="0.5" value="0">
-            </div>
-
-            <div class="form-group">
-                <label for="prev-cp">Previous Total Credit Points</label>
-                <input type="number" id="prev-cp" placeholder="Previous cumulative credit points" min="0" step="0.01" value="0">
+                <label for="prev-cp">Previous Total Credit Points *</label>
+                <input type="number" id="prev-cp" placeholder="Previous cumulative credit points" min="0" step="0.01" value="0" required>
             </div>
 
             <h4>📚 Current Semester Courses</h4>
@@ -443,9 +447,8 @@
                     <tr>
                         <th>Sr</th>
                         <th>Course Code</th>
-                        <th>Course Title</th>
                         <th>Credit Hours</th>
-                        <th>Percentage (%)</th>
+                        <th>Percentage (%) (Expected)</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -453,7 +456,6 @@
                     <tr>
                         <td>1</td>
                         <td><input type="text" class="course-code" placeholder="EXT-571"></td>
-                        <td><input type="text" class="course-title" placeholder="Course Title"></td>
                         <td><input type="number" class="course-credits" min="0.5" max="10" step="0.5" value="3"></td>
                         <td><input type="number" class="course-percentage" min="0" max="100" step="0.1" value="80"></td>
                         <td><button type="button" class="btn btn-danger" onclick="removeCourse(this)">Remove</button></td>
@@ -590,7 +592,6 @@
         var row = tbody.insertRow();
         row.innerHTML = '<td>' + rowCount + '</td>' +
             '<td><input type="text" class="course-code" placeholder="EXT-XXX"></td>' +
-            '<td><input type="text" class="course-title" placeholder="Course Title"></td>' +
             '<td><input type="number" class="course-credits" min="0.5" max="10" step="0.5" value="3"></td>' +
             '<td><input type="number" class="course-percentage" min="0" max="100" step="0.1" value="80"></td>' +
             '<td><button type="button" class="btn btn-danger" onclick="removeCourse(this)">Remove</button></td>';
@@ -624,14 +625,14 @@
         var admissionNo = document.getElementById('admission-no').value.trim();
         var semester = document.getElementById('semester').value.trim();
         
-        if (!name || !admissionNo || !semester) {
-            statusDiv.innerHTML = '<div class="error-message">❌ Please fill in all required fields (Name, Admission No, Semester)</div>';
+        // Get previous data, which are now mandatory
+        var prevCredits = parseFloat(document.getElementById('prev-credits').value);
+        var prevCP = parseFloat(document.getElementById('prev-cp').value);
+        
+        if (isNaN(prevCredits) || isNaN(prevCP)) {
+            statusDiv.innerHTML = '<div class="error-message">❌ "Previous Total Credits" and "Previous Total Credit Points" must be valid numbers.</div>';
             return;
         }
-        
-        // Get previous data
-        var prevCredits = parseFloat(document.getElementById('prev-credits').value) || 0;
-        var prevCP = parseFloat(document.getElementById('prev-cp').value) || 0;
         
         // Get courses
         var courses = [];
@@ -640,13 +641,12 @@
         for (var i = 0; i < rows.length; i++) {
             var row = rows[i];
             var code = row.querySelector('.course-code').value.trim();
-            var title = row.querySelector('.course-title').value.trim();
             var credits = parseFloat(row.querySelector('.course-credits').value) || 0;
             var percentage = parseFloat(row.querySelector('.course-percentage').value) || 0;
             var gp = percentage / 10;
             
-            if (code && title && credits > 0) {
-                courses.push({ code: code, title: title, credits: credits, percentage: percentage, gp: gp });
+            if (code && credits > 0) {
+                courses.push({ code: code, title: '', credits: credits, percentage: percentage, gp: gp });
             }
         }
         
@@ -694,14 +694,14 @@
     // Display results
     function displayResults() {
         // Update display elements
-        document.getElementById('display-name').textContent = studentData.name;
-        document.getElementById('display-admission').textContent = studentData.admissionNo;
-        document.getElementById('display-semester').textContent = studentData.semester;
+        document.getElementById('display-name').textContent = studentData.name || '-';
+        document.getElementById('display-admission').textContent = studentData.admissionNo || '-';
+        document.getElementById('display-semester').textContent = studentData.semester || '-';
         
         // Create results table
         var tableHTML = '<table class="course-table">' +
             '<thead><tr>' +
-            '<th>Sr</th><th>Course Code</th><th>Course Title</th>' +
+            '<th>Sr</th><th>Course Code</th>' +
             '<th>Credit Hours</th><th>Percentage (%)</th><th>Grade Points</th><th>Credit Points</th>' +
             '</tr></thead><tbody>';
         
@@ -711,7 +711,6 @@
             tableHTML += '<tr>' +
                 '<td>' + (i + 1) + '</td>' +
                 '<td>' + course.code + '</td>' +
-                '<td>' + course.title + '</td>' +
                 '<td>' + course.credits + '</td>' +
                 '<td>' + course.percentage.toFixed(1) + '</td>' +
                 '<td>' + course.gp.toFixed(1) + '</td>' +
@@ -751,7 +750,6 @@
             tbody.innerHTML = '<tr>' +
                 '<td>1</td>' +
                 '<td><input type="text" class="course-code" placeholder="EXT-571"></td>' +
-                '<td><input type="text" class="course-title" placeholder="Course Title"></td>' +
                 '<td><input type="number" class="course-credits" min="0.5" max="10" step="0.5" value="3"></td>' +
                 '<td><input type="number" class="course-percentage" min="0" max="100" step="0.1" value="80"></td>' +
                 '<td><button type="button" class="btn btn-danger" onclick="removeCourse(this)">Remove</button></td>' +
@@ -776,7 +774,7 @@
 
     // Show prediction section
     function showPrediction() {
-        if (studentData.ocpa === 0) {
+        if (studentData.ocpa === 0 && studentData.currentCredits === 0) {
             alert('⚠️ Please calculate OCPA first!');
             return;
         }
@@ -868,7 +866,11 @@
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url;
-        a.download = 'PAU_OCPA_Report_' + studentData.admissionNo.replace(/[^a-zA-Z0-9]/g, '_') + '.html';
+        var filename = 'PAU_OCPA_Report.html';
+        if (studentData.admissionNo) {
+            filename = 'PAU_OCPA_Report_' + studentData.admissionNo.replace(/[^a-zA-Z0-9]/g, '_') + '.html';
+        }
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -880,17 +882,17 @@
     // Export to CSV
     function exportToCSV() {
         var csvContent = "PAU OCPA Report\n";
-        csvContent += "Student Name," + studentData.name + "\n";
-        csvContent += "Admission No," + studentData.admissionNo + "\n";
-        csvContent += "Semester," + studentData.semester + "\n\n";
+        csvContent += "Student Name," + (studentData.name || 'N/A') + "\n";
+        csvContent += "Admission No," + (studentData.admissionNo || 'N/A') + "\n";
+        csvContent += "Semester," + (studentData.semester || 'N/A') + "\n\n";
         
         csvContent += "Course Details\n";
-        csvContent += "Sr,Course Code,Course Title,Credit Hours,Percentage (%),Grade Points,Credit Points\n";
+        csvContent += "Sr,Course Code,Credit Hours,Percentage (%),Grade Points,Credit Points\n";
         
         for (var i = 0; i < studentData.courses.length; i++) {
             var course = studentData.courses[i];
             var creditPoints = course.credits * course.gp;
-            csvContent += (i + 1) + ',"' + course.code + '","' + course.title + '",' + 
+            csvContent += (i + 1) + ',"' + course.code + '",' + 
                 course.credits + ',' + course.percentage.toFixed(1) + ',' + course.gp.toFixed(1) + ',' + creditPoints.toFixed(2) + '\n';
         }
         
@@ -905,7 +907,11 @@
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url;
-        a.download = 'PAU_OCPA_Report_' + studentData.admissionNo.replace(/[^a-zA-Z0-9]/g, '_') + '.csv';
+        var filename = 'PAU_OCPA_Report.csv';
+        if (studentData.admissionNo) {
+            filename = 'PAU_OCPA_Report_' + studentData.admissionNo.replace(/[^a-zA-Z0-9]/g, '_') + '.csv';
+        }
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -919,7 +925,7 @@
         var currentCPA = studentData.currentCredits > 0 ? studentData.currentCP / studentData.currentCredits : 0;
         
         return '<!DOCTYPE html>\n<html>\n<head>\n' +
-            '<title>PAU OCPA Report - ' + studentData.admissionNo + '</title>\n' +
+            '<title>PAU OCPA Report - ' + (studentData.admissionNo || 'N/A') + '</title>\n' +
             '<style>\n' +
             'body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }\n' +
             '.header { background: #2e7d32; color: white; padding: 20px; text-align: center; margin-bottom: 30px; }\n' +
@@ -932,16 +938,16 @@
             '</style>\n</head>\n<body>\n' +
             '<div class="header">\n<h1>🎓 PAU OCPA Report</h1>\n<p>Punjab Agricultural University</p>\n</div>\n' +
             '<div class="info-box">\n<h3>Student Information</h3>\n' +
-            '<p><strong>Name:</strong> ' + studentData.name + '</p>\n' +
-            '<p><strong>Admission Number:</strong> ' + studentData.admissionNo + '</p>\n' +
-            '<p><strong>Semester:</strong> ' + studentData.semester + '</p>\n' +
+            '<p><strong>Name:</strong> ' + (studentData.name || 'N/A') + '</p>\n' +
+            '<p><strong>Admission Number:</strong> ' + (studentData.admissionNo || 'N/A') + '</p>\n' +
+            '<p><strong>Semester:</strong> ' + (studentData.semester || 'N/A') + '</p>\n' +
             '<p><strong>Report Generated:</strong> ' + new Date().toLocaleDateString() + '</p>\n</div>\n' +
             '<h3>📚 Course Details</h3>\n<table>\n<thead>\n<tr>\n' +
-            '<th>Sr</th><th>Course Code</th><th>Course Title</th><th>Credit Hours</th><th>Percentage (%)</th><th>Grade Points</th><th>Credit Points</th>\n' +
+            '<th>Sr</th><th>Course Code</th><th>Credit Hours</th><th>Percentage (%)</th><th>Grade Points</th><th>Credit Points</th>\n' +
             '</tr>\n</thead>\n<tbody>\n' +
             studentData.courses.map(function(course, index) {
                 return '<tr>\n<td>' + (index + 1) + '</td>\n<td>' + course.code + '</td>\n' +
-                    '<td>' + course.title + '</td>\n<td>' + course.credits + '</td>\n' +
+                    '<td>' + course.credits + '</td>\n' +
                     '<td>' + course.percentage.toFixed(1) + '</td>\n' +
                     '<td>' + course.gp.toFixed(1) + '</td>\n<td>' + (course.credits * course.gp).toFixed(2) + '</td>\n</tr>';
             }).join('\n') +
