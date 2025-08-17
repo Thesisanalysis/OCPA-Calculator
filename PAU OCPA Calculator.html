@@ -359,6 +359,32 @@
             color: white;
         }
 
+        .image-help-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .image-help-box h4 {
+            margin-top: 0;
+            color: #ff9800;
+        }
+        .image-help-box p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .image-help-box img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+            border: 1px solid #ff9800;
+            border-radius: 4px;
+        }
+
+
         /* Responsive design for mobile */
         @media (max-width: 768px) {
             .pau-ocpa-calculator {
@@ -428,16 +454,22 @@
             </div>
             
             <p style="font-style: italic; font-size: 14px; margin-top: -10px; margin-bottom: 20px;">
-                <strong style="color: #d32f2f;">Important:</strong> You can find "Cumu. Cr. Hrs. and Cumu. Cr. Pts" in the CP sheet. For first-semester students, fill these values with '0' (zero).
+                <strong style="color: #d32f2f;">Important:</strong> For first-semester students, fill in "Cumulative Total Credits" and "Cumulative Total Credit Points" with '0' (zero).
             </p>
 
+            <div class="image-help-box">
+                <h4>Confused about where to find the data?</h4>
+                <p>Look for the **"Cumulative"** or **"Previous"** section on your semester's marksheet or credit point sheet. These values are typically found at the bottom of the table from your most recently completed semester.</p>
+                <img src="https://i.imgur.com/gK9pB0K.jpg" alt="Example of a marksheet with cumulative credits and credit points highlighted.">
+            </div>
+
             <div class="form-group">
-                <label for="prev-credits">Cumulative Credit Hours *</label>
+                <label for="prev-credits">Cumulative Total Credits *</label>
                 <input type="number" id="prev-credits" placeholder="Previous cumulative credit hours" min="0" step="0.5" value="0" required>
             </div>
 
             <div class="form-group">
-                <label for="prev-cp">Cumulative Credit Points *</label>
+                <label for="prev-cp">Cumulative Total Credit Points *</label>
                 <input type="number" id="prev-cp" placeholder="Previous cumulative credit points" min="0" step="0.01" value="0" required>
             </div>
 
@@ -489,10 +521,10 @@
                 <p><strong>Current Semester Credit Hours:</strong> <span id="current-credits">0</span></p>
                 <p><strong>Current Semester Credit Points:</strong> <span id="current-cp">0.00</span></p>
                 <p><strong>Current Semester CPA:</strong> <span id="current-cpa">0.00</span></p>
-                <p><strong>Previous Credit Hours:</strong> <span id="previous-credits">0</span></p>
-                <p><strong>Previous Credit Points:</strong> <span id="previous-cp">0.00</span></p>
+                <p><strong>Cumulative Credit Hours:</strong> <span id="previous-credits">0</span></p>
+                <p><strong>Cumulative Credit Points:</strong> <span id="previous-cp">0.00</span></p>
                 <div class="ocpa-display">
-                    Overall OCPA: <span id="final-ocpa">0.00</span>
+                    Overall Cumulative Performance Average: <span id="final-ocpa">0.00</span>
                 </div>
             </div>
 
@@ -630,7 +662,7 @@
         var prevCP = parseFloat(document.getElementById('prev-cp').value);
         
         if (isNaN(prevCredits) || isNaN(prevCP)) {
-            statusDiv.innerHTML = '<div class="error-message">❌ "Previous Total Credits" and "Previous Total Credit Points" must be valid numbers.</div>';
+            statusDiv.innerHTML = '<div class="error-message">❌ "Cumulative Total Credits" and "Cumulative Total Credit Points" must be valid numbers.</div>';
             return;
         }
         
@@ -702,7 +734,7 @@
         var tableHTML = '<table class="course-table">' +
             '<thead><tr>' +
             '<th>Sr</th><th>Course Code</th>' +
-            '<th>Credit Hours</th><th>Percentage (%)</th><th>Grade Points</th><th>Credit Points</th>' +
+            '<th>Credit Hours</th><th>Percentage (%)</th><th>Credit Points</th>' +
             '</tr></thead><tbody>';
         
         for (var i = 0; i < studentData.courses.length; i++) {
@@ -713,7 +745,6 @@
                 '<td>' + course.code + '</td>' +
                 '<td>' + course.credits + '</td>' +
                 '<td>' + course.percentage.toFixed(1) + '</td>' +
-                '<td>' + course.gp.toFixed(1) + '</td>' +
                 '<td>' + creditPoints.toFixed(2) + '</td>' +
                 '</tr>';
         }
@@ -956,8 +987,8 @@
             '<p><strong>Current Semester Credit Hours:</strong> ' + studentData.currentCredits + '</p>\n' +
             '<p><strong>Current Semester Credit Points:</strong> ' + studentData.currentCP.toFixed(2) + '</p>\n' +
             '<p><strong>Current Semester CPA:</strong> ' + currentCPA.toFixed(2) + '</p>\n' +
-            '<p><strong>Previous Total Credit Hours:</strong> ' + studentData.prevCredits + '</p>\n' +
-            '<p><strong>Previous Total Credit Points:</strong> ' + studentData.prevCP.toFixed(2) + '</p>\n' +
+            '<p><strong>Cumulative Credit Hours:</strong> ' + studentData.prevCredits + '</p>\n' +
+            '<p><strong>Cumulative Credit Points:</strong> ' + studentData.prevCP.toFixed(2) + '</p>\n' +
             '<div class="ocpa-highlight">\nOverall Cumulative Performance Average (OCPA): ' + studentData.ocpa.toFixed(2) + '\n</div>\n</div>\n' +
             '<div style="text-align: center; margin-top: 40px; color: #666;">\n' +
             '<p><em>This report was generated by PAU OCPA Calculator</em></p>\n</div>\n</body>\n</html>';
